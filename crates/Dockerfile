@@ -24,6 +24,6 @@ RUN apt-get update && apt-get install -y ca-certificates
 COPY --from=builder /build/target/release/relay /app/relay
 COPY ./run.sh /app/run.sh
 COPY ./relay.toml /app/relay.toml
-RUN chmod +x /app/run.sh
+RUN sed -i 's/\r$//' /app/run.sh && chmod +x /app/run.sh
 
 ENTRYPOINT ["./run.sh"]

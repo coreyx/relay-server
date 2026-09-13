@@ -30,7 +30,7 @@ use y_sweet_core::{
     },
 };
 
-const VERSION: &str = env!("CARGO_PKG_VERSION");
+const VERSION: &str = env!("GIT_VERSION");
 
 fn generate_public_key_from_private(private_key_b64: &str) -> Result<String, anyhow::Error> {
     use p256::SecretKey;

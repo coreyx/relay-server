@@ -775,12 +775,21 @@ impl CwtAuthenticator {
         claims: &CwtClaims,
         expected_audience: &str,
     ) -> Result<(), CwtError> {
+        if expected_audience == "*" || expected_audience.is_empty() {
+            return Ok(());
+        }
         match &claims.audience {
             Some(token_audience) if token_audience == expected_audience => {
                 // Valid - token intended for this service
                 Ok(())
             }
             Some(token_audience) => {
+                // Allow matching port across localhost and LAN/Tailscale hostnames
+                let token_port = token_audience.rsplit(':').next().and_then(|p| p.split('/').next());
+                let expected_port = expected_audience.rsplit(':').next().and_then(|p| p.split('/').next());
+                if token_port.is_some() && token_port == expected_port {
+                    return Ok(());
+                }
                 tracing::warn!(
                     expected = expected_audience,
                     found = token_audience,

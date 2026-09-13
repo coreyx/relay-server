@@ -5,7 +5,7 @@ fn main() {
         .or_else(|| git_output(&["describe", "--tags", "--exact-match"]))
         .or_else(env_sha)
         .or_else(|| git_output(&["rev-parse", "--short=12", "HEAD"]))
-        .unwrap_or_else(|| "unknown".to_string());
+        .unwrap_or_else(|| env::var("CARGO_PKG_VERSION").unwrap_or_else(|_| "0.12.7-openrelay".to_string()));
 
     println!("cargo:rustc-env=GIT_VERSION={}", version);
     println!("cargo:rerun-if-env-changed=RELAY_VERSION");
